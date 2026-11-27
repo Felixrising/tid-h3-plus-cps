@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tidradio H3 Plus - Web CPS</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/theme-console.css">
+    <script>
+        // Saved theme wins. With none saved, 8 September (Star Trek Day) defaults to the Kobayashi console theme.
+        try { const t = localStorage.getItem('h3p.theme'), d = new Date();
+            if (t) { if (t !== 'default') document.documentElement.dataset.theme = t; }
+            else if (d.getMonth() === 8 && d.getDate() === 8) document.documentElement.dataset.theme = 'console'; } catch (e) {}
+    </script>
 </head>
 <body>
     <header class="header">
@@ -29,6 +36,12 @@
             <div class="separator"></div>
             <button id="btnLoad" class="btn">Load File</button>
             <button id="btnSave" class="btn" disabled>Save File</button>
+            <div class="separator"></div>
+            <label class="theme-pick" title="Colour theme">Theme
+                <select id="themeSel"><option value="">Default</option><option value="console">Kobayashi console</option></select></label>
+            <span class="console-only amb" title="Ship's ambience: an engine hum made live in your browser (no recordings)">
+                <button id="btnAmbience" class="btn" type="button" aria-pressed="false">&#9834; Ambience</button>
+                <input type="range" id="ambVol" min="0" max="1" step="0.05" value="0.25" title="Ambience volume" aria-label="Ambience volume"></span>
         </div>
     </header>
 
@@ -957,5 +970,7 @@
     <script src="js/fm.js"></script>
     <script src="js/debug.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/ambience.js"></script>
+    <script src="js/theme.js"></script>
 </body>
 </html>

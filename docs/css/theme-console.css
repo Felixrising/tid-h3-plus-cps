@@ -1,0 +1,201 @@
+/* "Kobayashi console": an optional retro sci-fi control-panel theme, ported from LITO Config.
+   Black screen, rounded elbow frames, pill buttons in orange / lilac / blue blocks, condensed capitals.
+   Original artwork in CSS only (no logos, fonts or images from any TV show).
+   Only active with <html data-theme="console">; the default look is untouched. */
+:root[data-theme=console] {
+    color-scheme: dark;
+    --c-orange: #ff9933; --c-tan: #ffcc99; --c-lilac: #cc99ff; --c-violet: #9977dd; --c-blue: #88bbff; --c-sky: #aaddff;
+    --c-salmon: #ff7766; --c-gold: #ffbb33; --c-rose: #dd8899; --c-ok: #77dd99;
+
+    /* re-point the app's own variables so most of style.css follows along */
+    --bg-primary: #000; --bg-secondary: #000; --bg-tertiary: #0b0b10; --bg-hover: #1a1222; --bg-selected: #241631;
+    --text-primary: #ffe2bf; --text-secondary: #ffcc99; --text-muted: #b9a6d6;
+    --border-color: #2b2433; --border-light: #4a3d5c;
+    --accent-primary: var(--c-orange); --accent-hover: #ffaa55; --accent-success: var(--c-ok);
+    --accent-warning: var(--c-gold); --accent-error: var(--c-salmon);
+    --font-sans: "Bahnschrift Condensed", "Bahnschrift SemiCondensed", "Roboto Condensed", "Arial Narrow", "Liberation Sans Narrow", sans-serif-condensed, sans-serif;
+
+    --rail: 168px; --bar: 16px; --gap: 5px;
+    font-stretch: condensed;
+}
+
+/* the theme picker and ambience controls (theme picker shows in every theme, ambience only in this one) */
+.theme-pick { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); }
+.theme-pick select { width: auto;
+    padding: 4px 6px; border: 1px solid var(--border-color); border-radius: 4px;
+    background: var(--bg-tertiary); color: var(--text-primary); font-family: inherit; font-size: 12px;
+}
+.console-only { display: none !important; }
+[data-theme=console] .console-only { display: inline-flex !important; align-items: center; gap: 6px; }
+
+[data-theme=console] body {
+    display: grid; grid-template-columns: var(--rail) minmax(0, 1fr);
+    grid-template-areas: "head head" "rail main" "foot foot"; grid-template-rows: auto minmax(0, 1fr) auto;
+    column-gap: 14px; padding: 10px 12px; background: #000; font-size: 14px; letter-spacing: .02em;
+}
+[data-theme=console] .btn, [data-theme=console] .tab, [data-theme=console] .channel-grid th, [data-theme=console] .settings-group h3,
+[data-theme=console] .settings-group h4, [data-theme=console] .connection-status, [data-theme=console] .firmware-note,
+[data-theme=console] .status-bar, [data-theme=console] .header h1, [data-theme=console] .theme-pick,
+[data-theme=console] .btn-split-menu button, [data-theme=console] .setting-row label { text-transform: uppercase; }
+
+/* ---------- top elbow: header ---------- */
+[data-theme=console] .header {
+    grid-area: head; position: relative; height: auto; min-height: 78px; background: transparent; border: none;
+    padding: 6px 0 calc(var(--bar) + 10px) calc(var(--rail) + 14px); align-items: flex-start; flex-wrap: wrap; gap: 8px;
+}
+[data-theme=console] .header::before { /* vertical part of the elbow, joined to the bar along the bottom */
+    content: 'H3 · 144'; position: absolute; left: 0; top: 0; bottom: 0; width: var(--rail);
+    background: var(--c-orange); border-radius: 46px 0 0 0; color: #000; font-weight: 700; font-size: 13px;
+    display: flex; align-items: flex-start; justify-content: flex-end; padding: 10px 12px; letter-spacing: .12em;
+}
+[data-theme=console] .header::after { /* horizontal bar with a lilac and a blue end cap */
+    content: ''; position: absolute; left: var(--rail); right: 0; bottom: 0; height: var(--bar);
+    background: linear-gradient(90deg, var(--c-orange) 0 calc(100% - 132px), #000 calc(100% - 132px) calc(100% - 127px),
+        var(--c-lilac) calc(100% - 127px) calc(100% - 68px), #000 calc(100% - 68px) calc(100% - 63px), var(--c-blue) calc(100% - 63px));
+    border-radius: 0 99px 99px 0;
+}
+[data-theme=console] .header-left::before { /* inner curve where the rail meets the bar */
+    content: ''; position: absolute; left: var(--rail); bottom: var(--bar); width: 30px; height: 30px;
+    background: radial-gradient(circle at 100% 0, transparent 29.5px, var(--c-orange) 30px); pointer-events: none;
+}
+[data-theme=console] .header-left, [data-theme=console] .header-actions { flex-wrap: wrap; gap: 8px; }
+[data-theme=console] .header h1 { font-size: 26px; font-weight: 700; color: var(--c-orange); letter-spacing: .08em; }
+[data-theme=console] .firmware-note { background: none; color: var(--c-lilac); font-size: 12px; padding: 0; }
+[data-theme=console] .connection-status {
+    border-radius: 99px; background: var(--c-violet); color: #000; font-weight: 700; padding: 6px 14px; letter-spacing: .07em;
+}
+[data-theme=console] .connection-status.connected { background: var(--c-ok); color: #000; }
+[data-theme=console] .separator { background: var(--c-violet); width: 5px; border-radius: 3px; height: 28px; margin: 0 4px; }
+[data-theme=console] .theme-pick { color: var(--c-lilac); letter-spacing: .06em; }
+
+/* ---------- left rail: tabs ---------- */
+[data-theme=console] .tabs {
+    grid-area: rail; height: auto; flex-direction: column; gap: var(--gap); padding: var(--gap) 0 0; border: none; background: #000;
+}
+[data-theme=console] .tabs::after { content: ''; flex: 1; min-height: 40px; background: var(--c-violet); }
+[data-theme=console] .tab {
+    border: none; border-radius: 0; text-align: right; padding: 26px 12px 6px; color: #000; font-weight: 700; font-size: 14px;
+    letter-spacing: .08em; background: var(--c-lilac); transition: none;
+}
+[data-theme=console] .tab:nth-of-type(4n+2) { background: var(--c-tan); }
+[data-theme=console] .tab:nth-of-type(4n+3) { background: var(--c-blue); }
+[data-theme=console] .tab:nth-of-type(4n) { background: var(--c-rose); }
+[data-theme=console] .tab:hover { filter: brightness(1.15); color: #000; }
+[data-theme=console] .tab.active { background: var(--c-orange); color: #000; box-shadow: inset -8px 0 0 #000, inset -14px 0 0 var(--c-orange); }
+[data-theme=console] .tab.active::after { display: none; }
+[data-theme=console] .tab.hidden { display: none; }
+[data-theme=console] .main-content { grid-area: main; padding: 8px 0 10px; min-height: 0; }
+
+/* ---------- bottom elbow: status bar ---------- */
+[data-theme=console] .status-bar {
+    grid-area: foot; position: relative; height: auto; min-height: 36px; border: none; color: #000; font-weight: 700; font-size: 12px;
+    padding: 8px 70px 8px calc(var(--rail) + 14px); background: var(--c-violet); border-radius: 0 0 0 46px; letter-spacing: .06em;
+}
+[data-theme=console] .status-bar::after {
+    content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 56px; background: var(--c-blue);
+    border-radius: 0 99px 99px 0; border-left: 5px solid #000;
+}
+[data-theme=console] .progress-container { background: #000; height: 10px; border-radius: 99px; width: 240px; }
+[data-theme=console] .progress-bar { background: var(--c-gold); }
+
+/* ---------- controls: pills ---------- */
+[data-theme=console] .btn {
+    border: none; border-radius: 99px; background: var(--c-blue); color: #000; font-weight: 700; letter-spacing: .07em;
+    padding: 7px 18px; font-size: 13.5px; transition: none;
+}
+[data-theme=console] .btn:hover:not(:disabled) { filter: brightness(1.15); background: var(--c-blue); }
+[data-theme=console] .btn:disabled { opacity: .28; }
+[data-theme=console] .btn-primary, [data-theme=console] .btn-primary:hover:not(:disabled) { background: var(--c-orange); }
+[data-theme=console] #btnRead, [data-theme=console] #btnRead:hover:not(:disabled) { background: var(--c-lilac); }
+[data-theme=console] .btn-split-main, [data-theme=console] .btn-split-main:hover:not(:disabled),
+[data-theme=console] .btn-split-arrow, [data-theme=console] .btn-split-arrow:hover:not(:disabled) { background: var(--c-salmon); }
+[data-theme=console] .btn-split-main { border-radius: 99px 4px 4px 99px; }
+[data-theme=console] .btn-split-arrow { border-radius: 4px 99px 99px 4px; margin-left: 4px; padding: 7px 12px; }
+[data-theme=console] #btnLoad, [data-theme=console] #btnLoad:hover:not(:disabled),
+[data-theme=console] #btnSave, [data-theme=console] #btnSave:hover:not(:disabled) { background: var(--c-tan); }
+[data-theme=console] #btnLoad { border-radius: 99px 4px 4px 99px; }
+[data-theme=console] #btnSave { border-radius: 4px 99px 99px 4px; margin-left: -4px; }
+[data-theme=console] .btn-split-menu { background: #000; border: 2px solid var(--c-salmon); border-radius: 0 16px 16px 16px; box-shadow: none; padding: 4px; }
+[data-theme=console] .btn-split-menu button { color: var(--c-salmon); border-radius: 99px; font-weight: 700; letter-spacing: .06em; }
+[data-theme=console] .btn-split-menu button:hover { background: var(--c-salmon); color: #000; }
+[data-theme=console] #btnAmbience, [data-theme=console] #btnAmbience:hover:not(:disabled) { background: var(--c-violet); }
+[data-theme=console] #btnAmbience[aria-pressed=true] { background: var(--c-gold); animation: lc-blink 2.4s steps(2) infinite; }
+[data-theme=console] #ambVol { width: 80px; accent-color: var(--c-orange); }
+@keyframes lc-blink { 50% { opacity: .55; } }
+
+[data-theme=console] .theme-pick select, [data-theme=console] .setting-row select,
+[data-theme=console] .setting-row input[type="text"], [data-theme=console] .setting-row input[type="number"] {
+    background-color: #000; color: var(--c-tan); border: 2px solid var(--c-violet); border-radius: 12px;
+}
+[data-theme=console] select option, [data-theme=console] select optgroup { background: #000; color: var(--c-tan); }
+[data-theme=console] .setting-row input[type="checkbox"] { accent-color: var(--c-orange); }
+
+/* ---------- settings: elbow frames ---------- */
+[data-theme=console] .settings-container { padding: 4px 4px 16px 0; gap: 14px; }
+[data-theme=console] .settings-group {
+    border: none; border-top: 12px solid var(--c-lilac); border-left: 36px solid var(--c-lilac);
+    border-radius: 34px 0 0 0; background: #000; padding: 8px 6px 12px 14px;
+}
+[data-theme=console] .settings-group:nth-child(3n+2) { border-color: var(--c-tan); }
+[data-theme=console] .settings-group:nth-child(3n) { border-color: var(--c-blue); }
+[data-theme=console] .settings-group.security-group { border-color: var(--c-salmon); }
+[data-theme=console] .settings-group h3 { color: var(--c-orange); font-weight: 700; letter-spacing: .1em; font-size: 16px; border-bottom: 3px solid var(--c-orange); }
+[data-theme=console] .settings-group h4 { color: var(--c-lilac) !important; letter-spacing: .08em; }
+[data-theme=console] .setting-row label { color: var(--c-tan); letter-spacing: .05em; font-size: 12.5px; }
+[data-theme=console] .setting-index { background: var(--c-violet); border: none; color: #000; border-radius: 99px; }
+[data-theme=console] .setting-note { color: var(--text-muted); }
+
+/* ---------- tables ---------- */
+[data-theme=console] .grid-toolbar, [data-theme=console] .debug-toolbar { background: #000; border: none; padding: 4px 0 8px; }
+[data-theme=console] .grid-info, [data-theme=console] .debug-info { color: var(--c-lilac); letter-spacing: .05em; text-transform: uppercase; }
+[data-theme=console] .grid-container, [data-theme=console] .fm-container { border-left: 10px solid var(--c-blue); }
+[data-theme=console] .channel-grid th {
+    background: #000; color: var(--c-orange); border-bottom: 3px solid var(--c-orange); letter-spacing: .09em; font-weight: 700;
+    font-family: var(--font-sans); font-size: 12.5px;
+}
+[data-theme=console] .channel-grid td { border-color: #1c1824; background: #000; }
+[data-theme=console] .channel-grid tr:hover td { background: #140d1c; }
+[data-theme=console] .channel-grid tr.selected td { background: #241631; }
+[data-theme=console] .channel-grid td:first-child .cell { color: var(--c-gold); font-weight: 700; }
+[data-theme=console] .cell { color: var(--c-tan); }
+[data-theme=console] .cell.focused { outline-color: var(--c-lilac); background: #140d1c; }
+[data-theme=console] .cell input, [data-theme=console] .cell select { background: #000; color: var(--c-tan); }
+[data-theme=console] .channel-grid th[data-tip]:hover { color: var(--c-gold); }
+[data-theme=console] .channel-grid th[data-tip]:hover::after,
+[data-theme=console] .settings-tooltip, [data-theme=console] .hex-tooltip {
+    background: #000; border: 2px solid var(--c-lilac); border-radius: 0 16px 16px 16px; color: var(--c-tan); text-transform: none;
+}
+[data-theme=console] .panel-disabled-message {
+    background: #000; border: none; border-left: 24px solid var(--c-orange); border-radius: 30px 99px 99px 30px;
+    color: var(--c-tan); text-transform: uppercase; letter-spacing: .08em; font-weight: 700;
+}
+
+/* ---------- debug ---------- */
+[data-theme=console] .debug-trace { border-left: 10px solid var(--c-violet); background: #000; }
+[data-theme=console] .debug-trace-progress { background: #1a1222; border-radius: 99px; }
+[data-theme=console] .debug-trace-progress-bar { background: var(--c-gold); }
+[data-theme=console] .hexdump-table th { background: #000; color: var(--c-orange); }
+
+/* ---------- scrollbars ---------- */
+[data-theme=console] ::-webkit-scrollbar-thumb { background: var(--c-violet); border-color: #000; border-radius: 99px; }
+[data-theme=console] ::-webkit-scrollbar-thumb:hover { background: var(--c-lilac); }
+[data-theme=console] ::selection { background: var(--c-orange); color: #000; }
+
+/* ---------- narrow screens: rail becomes a row of pills ---------- */
+@media (max-width: 720px) {
+    [data-theme=console] body { display: flex; flex-direction: column; padding: 6px; }
+    [data-theme=console] .header { padding: 8px 8px calc(var(--bar) + 8px) 64px; }
+    [data-theme=console] .header::before { width: 52px; content: ''; border-radius: 26px 0 0 0; }
+    [data-theme=console] .header::after { left: 52px; }
+    [data-theme=console] .header-left::before { left: 52px; }
+    [data-theme=console] .tabs { flex-direction: row; flex-wrap: wrap; padding: 6px 0; }
+    [data-theme=console] .tabs::after { display: none; }
+    [data-theme=console] .tab { padding: 8px 14px; border-radius: 99px; }
+    [data-theme=console] .tab.active { box-shadow: none; outline: 2px solid var(--c-tan); outline-offset: 2px; }
+    [data-theme=console] .status-bar { padding: 8px 70px 8px 20px; border-radius: 0 0 0 26px; }
+    [data-theme=console] .settings-group { border-left-width: 16px; border-radius: 22px 0 0 0; }
+}
+@media (max-width: 720px) {
+    [data-theme=console] #btnLoad, [data-theme=console] #btnSave { border-radius: 99px; margin-left: 0; }
+    [data-theme=console] .panel-disabled-message { width: 80%; }
+}
