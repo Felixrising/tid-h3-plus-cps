@@ -45,7 +45,7 @@ const Theme = (() => {
     // On by default at 25%. Browsers block sound until the first click or key, so it is armed and starts then.
     // The button mutes it and that choice is remembered.
     const ambOn = () => load(AMB_KEY) !== 'off';
-    let btnAmb, ambVol;
+    let btnAmb, ambVol, radioBusy = false;
 
     async function toggleAmbience(on, remember = true) {
         if (remember) store(AMB_KEY, on ? 'on' : 'off');
@@ -65,7 +65,27 @@ const Theme = (() => {
         else if (t === 'console' && ambOn()) toggleAmbience(true, false); // picking the theme is a click, so audio may start
     }
 
+    // Keep the radio link quiet: pause the hum while the app reads or writes the radio, then bring it back.
+    // The H3 read streams 512 requests without waiting for replies, so anything that competes for the
+    // Bluetooth radio (audio going to Bluetooth headphones or speakers, for example) can make it lose a block and stall.
+    function pauseDuringRadio(name) {
+        const orig = BLE[name];
+        if (typeof orig !== 'function') return;
+        BLE[name] = async function (...args) {
+            radioBusy = true;
+            const wasPlaying = Ambience.isPlaying();
+            if (wasPlaying) await Ambience.stop();
+            try { return await orig.apply(this, args); }
+            finally {
+                radioBusy = false;
+                if (wasPlaying && isOn() && ambOn()) Ambience.start(Number(ambVol.value)).catch(() => {});
+            }
+        };
+    }
+
     function init() {
+        if (typeof BLE !== 'undefined') ['readMemory', 'writeMemory'].forEach(pauseDuringRadio);
+
         const sel = document.getElementById('themeSel');
         btnAmb = document.getElementById('btnAmbience');
         ambVol = document.getElementById('ambVol');
@@ -82,6 +102,7 @@ const Theme = (() => {
         });
         const arm = (e) => {
             if (e.target?.closest?.('#btnAmbience, #ambVol, #themeSel')) return; // those controls handle themselves
+            if (radioBusy || e.target?.closest?.('#btnRead, #btnWrite, #writeMenu')) return; // never start the hum as a radio job begins
             if (isOn() && ambOn() && !Ambience.isPlaying()) toggleAmbience(true, false);
         };
         for (const ev of ['pointerdown', 'keydown']) document.addEventListener(ev, arm, { capture: true });
