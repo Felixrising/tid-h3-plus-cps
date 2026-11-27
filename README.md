@@ -2,7 +2,9 @@
 
 Web-based CPS for Tidradio H3 Plus radio using Web Bluetooth written in pure HTML+CSS+JS, runs in your browser.
 
-**[Launch App](https://jamarju.github.io/tid-h3-plus-cps/)**
+**[Launch App](https://felixrising.github.io/tid-h3-plus-cps/)**
+
+This is a fork of [jamarju/tid-h3-plus-cps](https://github.com/jamarju/tid-h3-plus-cps) by jamarju, with an optional Kobayashi console theme added.
 
 ## Quick Start
 
