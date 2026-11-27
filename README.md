@@ -24,6 +24,14 @@ Web-based CPS for Tidradio H3 Plus radio using Web Bluetooth written in pure HTM
 ### Debug
 ![Debug](img/debug.png)
 
+### Kobayashi console theme
+
+![Kobayashi console theme](img/console-channels.png)
+
+Choose **Theme → Kobayashi console** in the header for a retro sci-fi control panel with elbow frames, pill buttons and a side rail. It is an original take on the look, made in CSS only, with no logos, fonts or sounds from any TV show. The main buttons get playful names (Read is *Scan for lifeforms*, Write is *Make it so*, and so on); hover any of them for the plain name.
+
+It also plays an engine-room hum made live in your browser with the Web Audio API (no recordings). The hum is on by default at 25% and starts on your first click, because browsers don't allow sound before that. Press **♪ Engines online** to mute it, or use the slider; the app remembers both. The theme is the default every 8 September unless you've picked a theme. The default look is unchanged.
+
 ## File Format
 
 Configurations are saved as `.h3p` files - raw 16KB binary dumps of radio memory. This preserves all data including unknown fields for future compatibility.
